@@ -14,11 +14,11 @@ describe('TimeTravelerDate', () => {
 
   describe('freeze and unfreeze', () => {
     it('freezes and unfreezes given date', () => {
-      freeze(2019, 0, 10, 20, 20, 20);
+      freeze(Date.UTC(2016, 10, 16, 17, 45));
 
       expect(isFrozen()).toBe(true);
-      expect(Date.now()).toBe(1547148020000);
-      expect(new Date().toISOString()).toMatch('2019-01-10T19:20:20.000Z');
+      expect(Date.now()).toBe(1479318300000);
+      expect(new Date().toISOString()).toMatch('2016-11-16T17:45:00.000Z');
 
       unfreeze();
       expect(isFrozen()).toBe(false);
@@ -30,10 +30,10 @@ describe('TimeTravelerDate', () => {
 
       it('is possible to construct new dates with arguments', () => {
         freeze();
-        const date = new Date(2019, 0, 10, 20, 20, 20);
+        const date = new Date(Date.UTC(2016, 10, 16, 17, 45));
 
-        expect(date.toISOString()).toBe('2019-01-10T19:20:20.000Z');
-        expect(date.getTime()).toBe(1547148020000);
+        expect(date.toISOString()).toMatch('2016-11-16T17:45:00.000Z');
+        expect(date.getTime()).toBe(1479318300000);
       });
     });
   });
