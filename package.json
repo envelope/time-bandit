@@ -3,6 +3,13 @@
   "version": "0.1.0",
   "main": "lib/time-bandit.js",
   "license": "MIT",
+  "keywords": [
+    "date",
+    "mock",
+    "test",
+    "time"
+  ],
+  "repository": "github:envelope/time-bandit",
   "files": [
     "lib",
     "es",
