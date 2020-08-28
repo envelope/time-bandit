@@ -2,6 +2,8 @@ Time Bandit
 ===========
 Time Bandit makes it simpler to test your time-dependent code.
 
+[![Build Status](https://travis-ci.org/envelope/time-bandit.svg?branch=master)](https://travis-ci.org/envelope/time-bandit)
+
 ## Installation
 `npm install time-bandit` or `yarn add time-bandit`
 
