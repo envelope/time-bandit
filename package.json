@@ -2,6 +2,7 @@
   "name": "time-bandit",
   "version": "0.1.0",
   "main": "lib/time-bandit.js",
+  "module": "es/time-bandit.js",
   "license": "MIT",
   "keywords": [
     "date",
