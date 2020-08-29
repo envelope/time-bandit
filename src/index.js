@@ -23,6 +23,11 @@ export function freeze(...args) {
   global.Date = TimeTravelerDate;
   const date = new NativeDate(...args);
   timestamp = date.getTime();
+
+  // eslint-disable-next-line no-restricted-globals
+  if (isNaN(timestamp)) {
+    throw new Error('TimeBandit: invalid date');
+  }
 }
 
 export function travel(duration) {

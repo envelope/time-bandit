@@ -15,6 +15,11 @@ const NativeDate = Date;
 afterEach(unfreeze);
 
 describe('freeze()', () => {
+  it('throws an error if given an invalid date', () => {
+    expect(() => freeze('not too distant future'))
+      .toThrow('TimeBandit: invalid date');
+  });
+
   it('can freeze date and time at the current timestamp', () => {
     const timestamp = Date.now();
     freeze();
