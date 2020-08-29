@@ -1,4 +1,5 @@
 import {
+  TimeTravelerDate,
   freeze,
   unfreeze,
   isFrozen,
@@ -9,93 +10,126 @@ import {
   hours,
 } from '../src';
 
-describe('TimeTravelerDate', () => {
-  const NativeDate = Date;
+const NativeDate = Date;
 
-  describe('freeze and unfreeze', () => {
-    it('freezes and unfreezes given date', () => {
-      freeze(Date.UTC(2016, 10, 16, 17, 45));
+afterEach(unfreeze);
 
-      expect(isFrozen()).toBe(true);
-      expect(Date.now()).toBe(1479318300000);
-      expect(new Date().toISOString()).toMatch('2016-11-16T17:45:00.000Z');
+describe('freeze()', () => {
+  it('can freeze date and time at the current timestamp', () => {
+    const timestamp = Date.now();
+    freeze();
 
-      unfreeze();
-      expect(isFrozen()).toBe(false);
-      expect(Date).toBe(NativeDate);
-    });
-
-    describe('when time is frozen', () => {
-      afterEach(unfreeze);
-
-      it('is possible to construct new dates with arguments', () => {
-        freeze();
-        const date = new Date(Date.UTC(2016, 10, 16, 17, 45));
-
-        expect(date.toISOString()).toMatch('2016-11-16T17:45:00.000Z');
-        expect(date.getTime()).toBe(1479318300000);
-      });
-    });
+    expect(Date.now()).toBe(timestamp);
+    expect(new Date().getTime()).toBe(timestamp);
   });
 
-  describe('travel', () => {
-    const timestamp = 1547148020000;
+  it('can freeze date and time at a given timestamp', () => {
+    freeze(1445412480000);
 
-    afterEach(unfreeze);
-
-    it('adjusts time by the given milliseconds', () => {
-      freeze(timestamp);
-
-      travel(5000);
-      expect(Date.now()).toBe(timestamp + 5000);
-
-      travel(-5000);
-      expect(Date.now()).toBe(timestamp);
-
-      travel(-5000);
-      expect(Date.now()).toBe(timestamp - 5000);
-    });
-
-    describe('when not frozen before travel', () => {
-      it('uses the current timestamp as freezed date', () => {
-        const currentTimestamp = Date.now();
-
-        travel(1000);
-
-        expect(Date.now()).toBe(currentTimestamp + 1000);
-      });
-    });
+    expect(Date.now()).toBe(1445412480000);
+    expect(new Date().getTime()).toBe(1445412480000);
+    expect(new Date().toISOString()).toBe('2015-10-21T07:28:00.000Z');
   });
 
-  describe('seconds', () => {
-    it('adds or subtracts amount of given seconds in milliseconds', () => {
-      expect(seconds(1)).toBe(1000);
-      expect(seconds(3)).toBe(3000);
-      expect(seconds(-3)).toBe(-3000);
-    });
+  it('can freeze date and time at a given date string', () => {
+    freeze('2015-10-21T07:28:00.000Z');
+
+    expect(Date.now()).toBe(1445412480000);
+    expect(new Date().getTime()).toBe(1445412480000);
+    expect(new Date().toISOString()).toBe('2015-10-21T07:28:00.000Z');
+  });
+});
+
+describe('when date and time is frozen', () => {
+  it('is possible to construct new dates with arguments', () => {
+    freeze();
+
+    expect(new Date(Date.UTC(1985, 9, 26, 9, 0)).toISOString())
+      .toMatch('1985-10-26T09:00:00.000Z');
+
+    expect(new Date(Date.parse('2015-10-21T07:28:00.000Z')).toISOString())
+      .toMatch('2015-10-21T07:28:00.000Z');
+  });
+});
+
+describe('unfreeze()', () => {
+  it('restores the global `Date` object back to its original implementation', () => {
+    freeze(1445412480000);
+    unfreeze();
+
+    expect(Date).not.toBe(TimeTravelerDate);
+    expect(Date).toBe(NativeDate);
+    expect(Date.now()).not.toBe(1445412480000);
   });
 
-  describe('minutes', () => {
-    it('adds or subtracts amount of given minutes in milliseconds', () => {
-      expect(minutes(1)).toBe(60000);
-      expect(minutes(-1)).toBe(-60000);
-      expect(minutes(3)).toBe(180000);
-    });
+  it('clears the previously frozen date and time', () => {
+    freeze(1445412480000);
+    expect(Date.now()).toBe(1445412480000);
+
+    unfreeze();
+    freeze();
+    expect(Date.now()).not.toBe(1445412480000);
+  });
+});
+
+describe('travel()', () => {
+  it('adjusts the frozen time by the given amount of milliseconds', () => {
+    freeze(0);
+
+    travel(1000);
+    expect(Date.now()).toBe(1000);
+
+    travel(-2000);
+    expect(Date.now()).toBe(-1000);
+
+    travel(5000);
+    expect(Date.now()).toBe(4000);
   });
 
-  describe('days', () => {
-    it('adds or subtracts amount of given days in milliseconds', () => {
-      expect(days(1)).toBe(86400000);
-      expect(days(-1)).toBe(-86400000);
-      expect(days(3)).toBe(259200000);
+  describe('when not frozen before travel', () => {
+    it('freezes time at the current timestamp', () => {
+      const timestamp = Date.now();
+
+      travel(1000);
+      expect(Date.now()).toBe(timestamp + 1000);
     });
   });
+});
 
-  describe('hours', () => {
-    it('adds or subtracts amount of given hours in milliseconds', () => {
-      expect(hours(1)).toBe(3600000);
-      expect(hours(-1)).toBe(-3600000);
-      expect(hours(2)).toBe(7200000);
-    });
+describe('isFrozen()', () => {
+  it('returns whether date and time is currently frozen', () => {
+    freeze();
+    expect(isFrozen()).toBe(true);
+
+    unfreeze();
+    expect(isFrozen()).toBe(false);
+  });
+});
+
+describe('seconds()', () => {
+  it('returns the given amount of seconds in milliseconds', () => {
+    expect(seconds(1)).toBe(1000);
+    expect(seconds(-1)).toBe(-1000);
+  });
+});
+
+describe('minutes()', () => {
+  it('returns the given amount of minutes in milliseconds', () => {
+    expect(minutes(1)).toBe(60000);
+    expect(minutes(-1)).toBe(-60000);
+  });
+});
+
+describe('hours()', () => {
+  it('returns the given amount of hours in milliseconds', () => {
+    expect(hours(1)).toBe(3600000);
+    expect(hours(-1)).toBe(-3600000);
+  });
+});
+
+describe('days()', () => {
+  it('returns the given amount of days in milliseconds', () => {
+    expect(days(1)).toBe(86400000);
+    expect(days(-1)).toBe(-86400000);
   });
 });
