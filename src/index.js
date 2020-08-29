@@ -8,7 +8,7 @@ import {
 const NativeDate = global.Date;
 let timestamp = null;
 
-export class TimeTravelerDate extends NativeDate {
+export class TimeBanditDate extends NativeDate {
   constructor(...args) {
     const date = args.length ? args : [timestamp];
     super(...date);
@@ -20,7 +20,7 @@ export class TimeTravelerDate extends NativeDate {
 }
 
 export function freeze(...args) {
-  global.Date = TimeTravelerDate;
+  global.Date = TimeBanditDate;
   const date = new NativeDate(...args);
   timestamp = date.getTime();
 
@@ -31,7 +31,7 @@ export function freeze(...args) {
 }
 
 export function travel(duration) {
-  global.Date = TimeTravelerDate;
+  global.Date = TimeBanditDate;
 
   if (timestamp === null) {
     timestamp = NativeDate.now();
@@ -46,7 +46,7 @@ export function unfreeze() {
 }
 
 export function isFrozen() {
-  return global.Date === TimeTravelerDate;
+  return global.Date === TimeBanditDate;
 }
 
 export function seconds(amount) {

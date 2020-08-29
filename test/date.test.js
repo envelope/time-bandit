@@ -1,5 +1,5 @@
 import {
-  TimeTravelerDate,
+  TimeBanditDate,
   freeze,
   unfreeze,
   isFrozen,
@@ -62,7 +62,7 @@ describe('unfreeze()', () => {
     freeze(1445412480000);
     unfreeze();
 
-    expect(Date).not.toBe(TimeTravelerDate);
+    expect(Date).not.toBe(TimeBanditDate);
     expect(Date).toBe(NativeDate);
     expect(Date.now()).not.toBe(1445412480000);
   });
